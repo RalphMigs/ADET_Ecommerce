@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'item_details_page.dart';
 import 'search_page.dart';
 import 'package:flutter/foundation.dart';
+import 'category_page.dart'; // Import the CategoryPage
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,18 +14,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _cartItemCount = 1;
   String _selectedTab = 'ALL';
+  //String get _selectedCategory => '';  //remove this
   String _selectedCategory = '';
   final List<Map<String, String>> _allItems = [
-    {'id': '1', 'title': 'Keychain 1', 'price': 'P50', 'category': 'keychains', 'date': '2024-01-20'},
-    {'id': '2', 'title': 'Pin 1', 'price': 'P30', 'category': 'pins', 'date': '2024-01-15'},
-    {'id': '3', 'title': 'Phone Case 1', 'price': 'P100', 'category': 'phone accessories', 'date': '2024-01-25'},
-    {'id': '4', 'title': 'Notebook 1', 'price': 'P70', 'category': 'stationaries', 'date': '2024-01-10'},
-    {'id': '5', 'title': 'Sticker 1', 'price': 'P10', 'category': 'stickers', 'date': '2024-02-01'},
-    {'id': '6', 'title': 'Bag 1', 'price': 'P200', 'category': 'bags', 'date': '2024-01-28'},
-    {'id': '7', 'title': 'Mystery Box 1', 'price': 'P150', 'category': 'mystery boxes', 'date': '2024-02-05'},
-    {'id': '8', 'title': 'Keychain 2', 'price': 'P60', 'category': 'keychains', 'date': '2024-02-10'},
-    {'id': '9', 'title': 'Pin 2', 'price': 'P40', 'category': 'pins', 'date': '2024-02-08'},
-    {'id': '10', 'title': 'Phone Case 2', 'price': 'P120', 'category': 'phone accessories', 'date': '2024-01-22'},
+    {'id': '1', 'title': 'LaDS Caleb Keychain', 'price': 'P100', 'category': 'keychains', 'date': '2024-01-20', 'image': 'lib/images/keyC1.jpg'}, // Added image
+    {'id': '2', 'title': 'Studio Ghibli Notepads', 'price': 'P30', 'category': 'stationaries', 'date': '2024-01-10', 'image': 'lib/images/stationary1.jpg'},    // Added image
+    {'id': '3', 'title': 'BRAT BUT FILIPINO Vinyl Stickers', 'price': 'P30', 'category': 'stickers', 'date': '2024-02-01', 'image': 'lib/images/sticker1.png'},      // Added image
+    {'id': '4', 'title': 'Zhongli Acrylic Stand', 'price': 'P100', 'category': 'stationaries', 'date': '2024-01-28', 'image': 'lib/images/stationary2.jpg'},          // Added image
+    {'id': '5', 'title': 'LaDS Sylus Keychain', 'price': 'P100', 'category': 'keychains', 'date': '2024-02-05', 'image': 'lib/images/keyC3.jpg'}, // Added image
+    {'id': '6', 'title': 'LaDS Rafayel Keychain', 'price': 'P100', 'category': 'keychains', 'date': '2024-02-10', 'image': 'lib/images/keyC2.jpg'}, // Added image
+    {'id': '7', 'title': 'LaDS Zayne Keychain', 'price': 'P100', 'category': 'keychains', 'date': '2024-01-22', 'image': 'lib/images/keyC4.jpg'}, // Added image
+    {'id': '8', 'title': 'TokkiToons Hype Boy Vinyl', 'price': 'P70', 'category': 'stickers', 'date': '2024-02-01', 'image': 'lib/images/sticker2.jpg'}
   ];
 
   List<Map<String, String>> get _displayedItems {
@@ -36,6 +36,16 @@ class _HomePageState extends State<HomePage> {
     if (_selectedCategory.isNotEmpty) {
       filteredList = _allItems.where((item) => item['category'] == _selectedCategory).toList();
     }
+
+    // Apply tab filter
+    if (_selectedTab == 'NEWEST') {
+      filteredList.sort((a, b) => b['date']!.compareTo(a['date']!)); // Sort by date
+    } else if (_selectedTab == 'POPULAR') {
+      // For simplicity, let's assume 'popular' is based on price,
+      //  You'd replace this with actual popularity logic.
+      filteredList.sort((a, b) => b['price']!.compareTo(a['price']!));
+    }
+
     if (kDebugMode) {
       print('Filtered List: $filteredList');
     }
@@ -44,11 +54,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, String>> displayedItems = _displayedItems; // Use the getter
+    final List<Map<String, String>> displayedItems = _displayedItems;
     return Scaffold(
       appBar: AppBar(
         title: Image.asset(
-          'lib/images/piecesOFus.png',
+          'lib/images/piecesOFus.png', //  Keep this if it's your logo
           height: 30,
           scale: 1,
         ),
@@ -65,7 +75,7 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.shopping_cart),
             onPressed: () {
-              _showCartModal(context);
+              _showCartModal(context, null); // Pass null initially
             },
           ),
         ],
@@ -92,6 +102,7 @@ class _HomePageState extends State<HomePage> {
                 scrollDirection: Axis.horizontal,
                 itemCount: 5,
                 itemBuilder: (context, index) {
+                  // Use your own image here, do not change this line
                   return _buildCarouselItem(context, index);
                 },
               ),
@@ -102,13 +113,27 @@ class _HomePageState extends State<HomePage> {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    _buildCategoryIcon('Keychains', Icons.key_outlined),
-                    _buildCategoryIcon('Pins', Icons.push_pin_outlined),
-                    _buildCategoryIcon('Phone Accessories', Icons.phone_android),
-                    _buildCategoryIcon('Stationaries', Icons.edit_note),
-                    _buildCategoryIcon('Stickers', Icons.sticky_note_2),
-                    _buildCategoryIcon('Bags', Icons.shopping_bag),
-                    _buildCategoryIcon('Mystery Boxes', Icons.card_giftcard),
+                    _buildCategoryIcon('keychains', Icons.key_outlined),
+                    _buildCategoryIcon('pins', Icons.push_pin_outlined),
+                    _buildCategoryIcon('phone accessories', Icons.phone_android),
+                    _buildCategoryIcon('stationaries', Icons.edit_note),
+                    _buildCategoryIcon('stickers', Icons.sticky_note_2),
+                    _buildCategoryIcon('bags', Icons.shopping_bag),
+                    _buildCategoryIcon('mystery boxes', Icons.card_giftcard),
+                  ],
+                ),
+              ),
+            ),
+            // Added ALL, NEWEST, POPULAR buttons here
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Center( // Wrap with a Center widget
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center, // center the buttons
+                  children: [
+                    _buildCategoryTab('ALL'),
+                    _buildCategoryTab('NEWEST'),
+                    _buildCategoryTab('POPULAR'),
                   ],
                 ),
               ),
@@ -120,9 +145,10 @@ class _HomePageState extends State<HomePage> {
                 crossAxisCount: 2,
                 childAspectRatio: 0.8,
               ),
-              itemCount: displayedItems.length,  // Use the local variable here
+              itemCount: displayedItems.length,
               itemBuilder: (context, index) {
-                return _buildItemCard(context, index, displayedItems); // Pass displayedItems
+                // Pass the image path from the item data.  Use a placeholder if null.
+                return _buildItemCard(context, index, displayedItems);
               },
             ),
           ],
@@ -132,6 +158,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildCarouselItem(BuildContext context, int index) {
+    //  DO NOT MODIFY THIS FUNCTION
     return Container(
       width: 150,
       margin: const EdgeInsets.all(8.0),
@@ -164,15 +191,22 @@ class _HomePageState extends State<HomePage> {
       child: GestureDetector(
         onTap: () {
           setState(() {
-            _selectedCategory = title;
+            _selectedCategory = isSelected ? '' : title;
           });
+          // Navigate to CategoryPage when a category is tapped
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CategoryPage(category: title, items: _allItems), // Pass the category title and all items
+            ),
+          );
         },
         child: Column(
           children: [
-            Icon(icon, color: isSelected ? Colors.white : Colors.blue),
+            Icon(icon, color: isSelected ? Colors.blueGrey : Colors.blue),
             Text(
               title,
-              style: TextStyle(fontSize: 12, color: isSelected ? Colors.white : Colors.blue),
+              style: TextStyle(fontSize: 12, color: isSelected ? Colors.blueGrey : Colors.blue),
             ),
             if (isSelected)
               Container(
@@ -189,20 +223,25 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildCategoryTab(String title) {
     final isSelected = _selectedTab == title;
-    return TextButton(
-      onPressed: () {
-        setState(() {
-          _selectedTab = title;
-        });
-      },
-      style: TextButton.styleFrom(
-        backgroundColor: isSelected ? Colors.blue : Colors.transparent,
-      ),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 12,
-          color: isSelected ? Colors.white : Colors.blue,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            _selectedTab = title;
+          });
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.blue),
+            borderRadius: BorderRadius.circular(5),
+            color: isSelected ? Colors.blue : Colors.transparent,
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Text(
+            title,
+            style: TextStyle(fontSize: 16, color: isSelected ? Colors.white : Colors.blue),
+          ),
         ),
       ),
     );
@@ -210,17 +249,10 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildItemCard(BuildContext context, int index, List<Map<String, String>> displayedItems) {
     final item = displayedItems[index];
+    String imagePath = item['image'] ?? 'lib/images/placeholder.jpg';
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ItemDetailsPage(
-              index: index,
-              item: item,
-            ),
-          ),
-        );
+        _showCartModal(context, item); // Pass the item here
       },
       child: Card(
         elevation: 4,
@@ -232,11 +264,18 @@ class _HomePageState extends State<HomePage> {
           children: [
             Expanded(
               child: Container(
-                decoration: BoxDecoration(
+                decoration:  BoxDecoration(
                   borderRadius: const BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
                   color: Colors.grey[300],
                 ),
-                child: Center(child: Text('Item ${item['id']}', style: const TextStyle(fontSize: 10))),
+                child: Center(
+                  child: Image.asset(
+                    imagePath,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                  ),
+                ),
               ),
             ),
             Padding(
@@ -255,8 +294,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-
-  void _showCartModal(BuildContext context) {
+  void _showCartModal(BuildContext context, Map<String, String>? item) { // Receive item data
+    int _cartItemCount = 1; // Initialize here
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -307,15 +346,15 @@ class _HomePageState extends State<HomePage> {
                           borderRadius: BorderRadius.circular(8.0),
                           color: Colors.grey[300],
                         ),
-                        child: const Center(
-                            child: Text('Item Image', style: TextStyle(fontSize: 10))),
+                        child:  item != null ? Image.asset(item['image'] ?? 'lib/images/placeholder.jpg',
+                          fit: BoxFit.cover,) : const Center(child: Text('Item Image', style: TextStyle(fontSize: 10))),
                       ),
                       const SizedBox(width: 16),
-                      const Column(
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text('AN IK - ANIK STICKERS', style: TextStyle(fontSize: 12)),
-                          Text('P35', style: TextStyle(fontSize: 10)),
+                          Text(item != null ? item['title']! : 'Item Title', style: const TextStyle(fontSize: 12)),
+                          Text(item != null ? item['price']! : 'Price', style: const TextStyle(fontSize: 10)),
                         ],
                       ),
                     ],
@@ -325,7 +364,7 @@ class _HomePageState extends State<HomePage> {
                     onPressed: () {
                       // Implement checkout functionality
                       if (kDebugMode) {
-                        print('Checkout Pressed with $_cartItemCount items');
+                        print('Add to cart Pressed with $_cartItemCount items');
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -335,7 +374,7 @@ class _HomePageState extends State<HomePage> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text('CHECK OUT', style: TextStyle(fontSize: 18, color: Colors.white)),
+                    child: const Text('ADD TO CART', style: TextStyle(fontSize: 18, color: Colors.white)), // changed here
                   ),
                 ],
               ),

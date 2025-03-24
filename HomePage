@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'item_details_page.dart';
 import 'search_page.dart';
 import 'package:flutter/foundation.dart';
-import 'category_page.dart'; // Import the CategoryPage
+//import 'category_page.dart'; // Import the CategoryPage //remove this
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,7 +11,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _cartItemCount = 1;
   String _selectedTab = 'ALL';
   //String get _selectedCategory => '';  //remove this
   String _selectedCategory = '';
@@ -194,12 +192,13 @@ class _HomePageState extends State<HomePage> {
             _selectedCategory = isSelected ? '' : title;
           });
           // Navigate to CategoryPage when a category is tapped
-          Navigator.push(
+          /*Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => CategoryPage(category: title, items: _allItems), // Pass the category title and all items
             ),
           );
+          */
         },
         child: Column(
           children: [
@@ -295,7 +294,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showCartModal(BuildContext context, Map<String, String>? item) { // Receive item data
-    int _cartItemCount = 1; // Initialize here
+    int cartItemCount = 1; // Initialize here
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -313,18 +312,18 @@ class _HomePageState extends State<HomePage> {
                         icon: const Icon(Icons.remove, color: Colors.blue),
                         onPressed: () {
                           setState(() {
-                            if (_cartItemCount > 1) {
-                              _cartItemCount--;
+                            if (cartItemCount > 1) {
+                              cartItemCount--;
                             }
                           });
                         },
                       ),
-                      Text('$_cartItemCount', style: const TextStyle(fontSize: 16)),
+                      Text('$cartItemCount', style: const TextStyle(fontSize: 16)),
                       IconButton(
                         icon: const Icon(Icons.add, color: Colors.blue),
                         onPressed: () {
                           setState(() {
-                            _cartItemCount++;
+                            cartItemCount++;
                           });
                         },
                       ),
@@ -364,7 +363,7 @@ class _HomePageState extends State<HomePage> {
                     onPressed: () {
                       // Implement checkout functionality
                       if (kDebugMode) {
-                        print('Add to cart Pressed with $_cartItemCount items');
+                        print('Add to cart Pressed with $cartItemCount items');
                       }
                     },
                     style: ElevatedButton.styleFrom(

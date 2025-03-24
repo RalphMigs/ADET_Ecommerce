@@ -136,19 +136,32 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.8,
+            // Conditionally display either the GridView or the message
+            if (displayedItems.isNotEmpty) ...[
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.8,
+                ),
+                itemCount: displayedItems.length,
+                itemBuilder: (context, index) {
+                  // Pass the image path from the item data.  Use a placeholder if null.
+                  return _buildItemCard(context, index, displayedItems);
+                },
               ),
-              itemCount: displayedItems.length,
-              itemBuilder: (context, index) {
-                // Pass the image path from the item data.  Use a placeholder if null.
-                return _buildItemCard(context, index, displayedItems);
-              },
-            ),
+            ] else ...[
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Center(
+                  child: Text(
+                    "Sorry, no products are available in this category.",
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),

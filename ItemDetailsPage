@@ -1,0 +1,36 @@
+import 'package:flutter/material.dart';
+
+class ItemDetailsPage extends StatelessWidget {
+  final int index;
+  final Map<String, String> item;
+
+  const ItemDetailsPage({super.key, required this.index, required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Item Details'),
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            Container(
+              width: 200,
+              height: 200,
+              color: Colors.grey[300],
+              child: Center(
+                  child: Text('Item ${item['id']} Details',
+                      style: const TextStyle(fontSize: 12))),
+            ),
+            const SizedBox(height: 16),
+            Text('Item Name: ${item['title']}', style: const TextStyle(fontSize: 14)),
+            Text('Price: ${item['price']}', style: const TextStyle(fontSize: 12)),
+            const Text('Description: Placeholder description for item.',
+                style: TextStyle(fontSize: 12)),
+          ],
+        ),
+      ),
+    );
+  }
+}

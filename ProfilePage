@@ -1,0 +1,102 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'home_page.dart'; // Import HomePage
+
+class ProfilePage extends StatelessWidget {
+  // Dummy data for demonstration - Kept within the class
+  final String userName = "John Doe";
+  final String userEmail = "test@example.com";
+  // Add orderDetails parameter to the constructor
+  final List<Map<String, dynamic>>? orderHistory;
+  const ProfilePage({super.key, this.orderHistory});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Profile'),
+        backgroundColor: Colors.blue,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Center( // Wrap the entire Column in a Center widget
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center, //  Change to center
+            children: <Widget>[
+              // Profile Picture
+              const CircleAvatar(
+                radius: 50, // Adjust size as needed
+                backgroundImage: NetworkImage(
+                    'https://via.placeholder.com/150'), // Replace with your image URL
+                // If you want to use an asset image:
+                // backgroundImage: AssetImage('lib/images/profile_picture.png'),
+              ),
+              const SizedBox(height: 10),
+              // User Information
+              const Text(
+                'User Information',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blue),
+              ),
+              const SizedBox(height: 10),
+              Text('Name: $userName', style: const TextStyle(fontSize: 16)),
+              Text('Email: $userEmail', style: const TextStyle(fontSize: 16)),
+              const SizedBox(height: 20),
+              const Text(
+                'Order History',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blue),
+              ),
+              const SizedBox(height: 10),
+              // Display order history
+              if (orderHistory != null && orderHistory!.isNotEmpty)
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: orderHistory!.length,
+                    itemBuilder: (context, index) {
+                      final order = orderHistory![index];
+                      final orderItems = order['order'];
+                      final deliveryDetails = order['deliveryDetails'];
+                      final paymentMethod = order['paymentMethod'];
+                      final totalPrice = order['totalPrice'];
+
+                      return Card(
+                        elevation: 3,
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start, // Keep this as start for individual order details
+                            children: [
+                              Text('Order #${index + 1}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.indigo)),
+                              const SizedBox(height: 10),
+                              Text('Payment Method: $paymentMethod', style: const TextStyle(fontSize: 14)),
+                              const SizedBox(height: 10),
+                              const Text('Delivery Details:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                              Text('  Receiver: ${deliveryDetails['receiverName']}', style: const TextStyle(fontSize: 14)),
+                              Text('  Address: ${deliveryDetails['specificAddress']}, ${deliveryDetails['barangay']}, ${deliveryDetails['city']}, ${deliveryDetails['province']}, ${deliveryDetails['region']} - ${deliveryDetails['postalCode']}', style: const TextStyle(fontSize: 14)),
+                              const SizedBox(height: 10),
+                              Text('Items:', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: orderItems.map<Widget>((item) {
+                                  return Text('  ${item['title']} x ${item['quantity']} - P${item['price']}', style: const TextStyle(fontSize: 14));
+                                }).toList(),
+                              ),
+                              const SizedBox(height: 10),
+                              Text('Total Price: P${totalPrice.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.green)),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                )
+              else
+                const Text('No order history available.', style: TextStyle(fontSize: 16, color: Colors.grey)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+

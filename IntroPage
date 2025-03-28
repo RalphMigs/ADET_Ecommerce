@@ -1,62 +1,143 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart'; // Import LoginPage
+import 'home_page.dart';
+import 'into_page.dart';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 
-class IntroPage extends StatelessWidget {
-  const IntroPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Image.asset(
-                'lib/images/piecesOFus.png',
-                height: 150,
+      backgroundColor: Colors.blueAccent,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image.asset(
+              'lib/images/piecesOFus.png',
+              height: 100,
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'LOGIN',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white, // Keep LOGIN text black
               ),
-              const SizedBox(height: 32),
-              const Text(
-                "Welcome to Pieces of Us",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _emailController,
+              decoration: const InputDecoration(
+                labelText: 'EMAIL',
+                labelStyle: TextStyle(color: Colors.white), // Label color
+                border: OutlineInputBorder(),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white), // Border color when not focused
                 ),
-                textAlign: TextAlign.center,
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white), // Border color when focused
+                ),
               ),
-              const SizedBox(height: 16),
-              const Text(
-                "Discover unique items and connect with our community.",
-                style: TextStyle(fontSize: 16),
-                textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.white), // Text color
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _passwordController,
+              obscureText: _obscurePassword,
+              decoration: InputDecoration(
+                labelText: 'PASSWORD',
+                labelStyle: const TextStyle(color: Colors.white), // Label color
+                border: const OutlineInputBorder(),
+                enabledBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white), // Border color when not focused
+                ),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white), // Border color when focused
+                ),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                    color: Colors.white, // Made the icon color black
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
+                ),
               ),
-              const SizedBox(height: 40),
-              ElevatedButton(
-                onPressed: () {
+              style: const TextStyle(color: Colors.white), // Text color
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton(
+              onPressed: () {
+                // Implement your login logic here
+                if (kDebugMode) {
+                  print('Email: ${_emailController.text}');
+                  print('Password: ${_passwordController.text}');
+                }
+
+                // Simulate successful login
+                if (_emailController.text == 'test@example.com' &&
+                    _passwordController.text == 'password123') {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                    MaterialPageRoute(builder: (context) => const HomePage()),
                   );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const Text(
-                  'Get Started',
-                  style: TextStyle(fontSize: 18),
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Invalid credentials')),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white, // Button color is blue
+                foregroundColor: Colors.blue,  // Text color is white
+                minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
-            ],
-          ),
+              child: const Text('LOGIN', style: TextStyle(fontSize: 18, color: Colors.blue)), // Ensure text is white
+            ),
+            const SizedBox(height: 20),
+            TextButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const IntroPage()),
+                );
+              },
+              child: const Text(
+                'Back to Intro',
+                style: TextStyle(fontSize: 16, color: Colors.white), // 'Back to Intro' is blue
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 }
+
